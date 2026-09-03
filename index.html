@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handles — Connect any website form to an inbox</title>
+<meta name="description" content="Handles turns any static website form into a working inbox. No backend required.">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand"><span class="brand-mark">H</span> Handles</a>
+    <nav class="site-nav">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#integration">Integration</a>
+    </nav>
+    <div class="site-nav-actions" id="navAuthActions">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="register.html" class="btn btn-primary">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="get-started">
+    <div class="container">
+      <span class="hero-eyebrow">Forms, without the backend</span>
+      <h1>Turn any website form into a working inbox</h1>
+      <p class="lead">Add one script tag to your site, tag your form with an ID, and every submission lands in your Handles dashboard — organized by website and form.</p>
+      <div class="hero-actions">
+        <a href="register.html" class="btn btn-primary">Create free account</a>
+        <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
+      </div>
+
+      <div class="code-preview">
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://mainhandles.onrender.com/forms.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+
+<span class="tag">&lt;form</span> <span class="attr">data-handles-form</span>=<span class="str">"YOUR_FORM_ID"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">name</span>=<span class="str">"name"</span> <span class="attr">placeholder</span>=<span class="str">"Name"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">name</span>=<span class="str">"email"</span> <span class="attr">placeholder</span>=<span class="str">"Email"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;textarea</span> <span class="attr">name</span>=<span class="str">"message"</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="str">"submit"</span><span class="tag">&gt;</span>Send<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-head">
+        <h2>Everything a form needs, none of a backend</h2>
+        <p>Handles handles the plumbing: routing, storage, spam filtering, and an inbox — so you can keep shipping static sites.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">W</div>
+          <h3>Unlimited websites</h3>
+          <p>Add every site you manage — a restaurant, a portfolio, a landing page — and keep their submissions cleanly separated.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">F</div>
+          <h3>Unlimited forms per site</h3>
+          <p>Contact, reservation, feedback, job application — create as many forms as you need, each with its own fields.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Dynamic fields</h3>
+          <p>Every form can collect completely different data. Handles stores whatever fields you define, automatically.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">✉</div>
+          <h3>Real inbox</h3>
+          <p>Read, search, and filter submissions by website or form. Mark them read, delete spam, keep things tidy.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Built-in protection</h3>
+          <p>Rate limiting, honeypot spam trapping, and strict per-user data isolation are on by default.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3>One script tag</h3>
+          <p>Works on plain HTML sites, including ones hosted on GitHub Pages. No build step, no framework required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works" style="background:#fff; border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border);">
+    <div class="container">
+      <div class="section-head">
+        <h2>How a submission gets to you</h2>
+      </div>
+      <div class="flow-steps">
+        <span class="step">Visitor</span>
+        <span>→</span>
+        <span class="step">Your website</span>
+        <span>→</span>
+        <span class="step">Handles script</span>
+        <span>→</span>
+        <span class="step">Handles API</span>
+        <span>→</span>
+        <span class="step">Your dashboard</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="integration">
+    <div class="container">
+      <div class="section-head">
+        <h2>Three steps to a working form</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">1</div>
+          <h3>Create a form</h3>
+          <p>Add your website, then create a form and define its fields from your Handles dashboard.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">2</div>
+          <h3>Copy the snippet</h3>
+          <p>Grab the integration script and your form ID — Handles generates both for you.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">3</div>
+          <h3>Get submissions</h3>
+          <p>Visitors submit the form like normal. You see it appear in your inbox in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Start collecting submissions in minutes</h2>
+        <p>Free to start. No credit card required.</p>
+        <a href="register.html" class="btn btn-primary" style="margin-top:10px;">Create free account</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">© 2026 Handles. Built for people who just want their forms to work.</div>
+</footer>
+
+<script src="js/api.js"></script>
+<script>
+  if (Auth.isLoggedIn()) {
+    document.getElementById('navAuthActions').innerHTML =
+      '<a href="dashboard.html" class="btn btn-primary">Go to dashboard</a>';
+  }
+</script>
+</body>
+</html>

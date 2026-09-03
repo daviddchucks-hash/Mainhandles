@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": { ".indexOn": ["email"] },
+    "emailIndex": {},
+    "websites": { ".indexOn": ["userId"] },
+    "forms": { ".indexOn": ["userId", "websiteId"] },
+    "submissions": { ".indexOn": ["userId", "websiteId", "formId"] }
+  }
+}

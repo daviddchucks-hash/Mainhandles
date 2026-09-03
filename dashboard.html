@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Handles</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar>
+    <a href="dashboard.html" class="brand"><span class="brand-mark">H</span> Handles</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link" data-nav-link="dashboard"><span class="icon">▦</span> Dashboard</a>
+      <a href="websites.html" class="sidebar-link" data-nav-link="websites"><span class="icon">◧</span> Websites</a>
+      <a href="forms.html" class="sidebar-link" data-nav-link="forms"><span class="icon">▤</span> Forms</a>
+      <a href="submissions.html" class="sidebar-link" data-nav-link="submissions"><span class="icon">✉</span> Submissions</a>
+      <a href="settings.html" class="sidebar-link" data-nav-link="settings"><span class="icon">⚙</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="avatarInitial">·</div>
+        <div data-user-name>—</div>
+      </div>
+      <button class="btn btn-ghost sidebar-logout" data-logout>Log out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <button class="menu-toggle" data-menu-toggle aria-label="Toggle menu">☰</button>
+        <h1>Dashboard</h1>
+        <p class="subtitle">A live view of everything coming into Handles.</p>
+      </div>
+      <a href="websites.html" class="btn btn-primary">+ Add website</a>
+    </div>
+
+    <div id="statsWrap">
+      <div class="loading-state"><div class="spinner"></div>Loading dashboard...</div>
+    </div>
+
+    <div class="card" style="margin-top:8px;">
+      <div class="page-header" style="padding:20px 24px 0; margin-bottom:0;">
+        <h2 style="font-size:16px;">Recent submissions</h2>
+        <a href="submissions.html" class="btn btn-ghost btn-sm">View all →</a>
+      </div>
+      <div id="recentWrap"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+/*!
+ * Handles integration script
+ * Add <script src="https://mainhandles.onrender.com/forms.js"></script> to any
+ * static website, then mark a form with data-handles-form="YOUR_FORM_ID".
+ * No backend of your own required.
+ */
+(function () {
+  'use strict';
+
+  var API_BASE = 'https://mainhandles.onrender.com';
+
+  function qsa(selector, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(selector));
+  }
+
+  function createStatusEl(form) {
+    var el = document.createElement('div');
+    el.className = 'handles-status';
+    el.style.marginTop = '12px';
+    el.style.fontFamily = 'inherit';
+    el.style.fontSize = '14px';
+    el.setAttribute('aria-live', 'polite');
+    form.appendChild(el);
+    return el;
+  }
+
+  function setStatus(el, type, message) {
+    el.textContent = message;
+    el.style.padding = '10px 12px';
+    el.style.borderRadius = '6px';
+    el.style.display = 'block';
+    if (type === 'success') {
+      el.style.background = '#e6f6ec';
+      el.style.color = '#146c2e';
+      el.style.border = '1px solid #b7e4c7';
+    } else if (type === 'error') {
+      el.style.background = '#fdecec';
+      el.style.color = '#a11';
+      el.style.border = '1px solid #f3b7b7';
+    } else {
+      el.style.background = '#eef2ff';
+      el.style.color = '#334';
+      el.style.border = '1px solid #d6dcff';
+    }
+  }
+
+  function collectFields(form) {
+    var data = {};
+    var elements = form.elements;
+    for (var i = 0; i < elements.length; i++) {
+      var field = elements[i];
+      if (!field.name) continue;
+      if (field.name === 'handles_hp') continue; // honeypot handled separately
+      if (field.type === 'submit' || field.type === 'button' || field.type === 'file') continue;
+
+      if (field.type === 'checkbox') {
+        data[field.name] = field.checked;
+      } else if (field.type === 'radio') {
+        if (field.checked) data[field.name] = field.value;
+      } else {
+        data[field.name] = field.value;
+      }
+    }
+    return data;
+  }
+
+  function ensureHoneypot(form) {
+    if (form.querySelector('input[name="handles_hp"]')) return;
+    var hp = document.createElement('input');
+    hp.type = 'text';
+    hp.name = 'handles_hp';
+    hp.setAttribute('autocomplete', 'off');
+    hp.setAttribute('tabindex', '-1');
+    hp.style.position = 'absolute';
+    hp.style.left = '-9999px';
+    hp.style.width = '1px';
+    hp.style.height = '1px';
+    hp.style.opacity = '0';
+    form.appendChild(hp);
+  }
+
+  function handleSubmit(form, formId) {
+    return function (event) {
+      event.preventDefault();
+
+      var statusEl = form.querySelector('.handles-status') || createStatusEl(form);
+      var submitBtn = form.querySelector('[type="submit"]');
+      var originalBtnText = submitBtn ? submitBtn.textContent : null;
+
+      var fields = collectFields(form);
+      var honeypotEl = form.querySelector('input[name="handles_hp"]');
+
+      setStatus(statusEl, 'info', 'Sending...');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+      }
+
+      fetch(API_BASE + '/api/public/submit/' + encodeURIComponent(formId), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: fields,
+          handles_hp: honeypotEl ? honeypotEl.value : ''
+        })
+      })
+        .then(function (res) {
+          return res.json().then(function (body) {
+            return { ok: res.ok, body: body };
+          });
+        })
+        .then(function (result) {
+          if (result.ok) {
+            setStatus(statusEl, 'success', 'Thanks! Your submission was received.');
+            form.reset();
+          } else {
+            setStatus(statusEl, 'error', (result.body && result.body.error) || 'Something went wrong. Please try again.');
+          }
+        })
+        .catch(function () {
+          setStatus(statusEl, 'error', 'Network error. Please check your connection and try again.');
+        })
+        .finally(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
+        });
+    };
+  }
+
+  function init() {
+    var forms = qsa('form[data-handles-form]');
+    forms.forEach(function (form) {
+      var formId = form.getAttribute('data-handles-form');
+      if (!formId) return;
+      ensureHoneypot(form);
+      form.addEventListener('submit', handleSubmit(form, formId));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

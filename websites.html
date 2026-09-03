@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Websites — Handles</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar>
+    <a href="dashboard.html" class="brand"><span class="brand-mark">H</span> Handles</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link" data-nav-link="dashboard"><span class="icon">▦</span> Dashboard</a>
+      <a href="websites.html" class="sidebar-link" data-nav-link="websites"><span class="icon">◧</span> Websites</a>
+      <a href="forms.html" class="sidebar-link" data-nav-link="forms"><span class="icon">▤</span> Forms</a>
+      <a href="submissions.html" class="sidebar-link" data-nav-link="submissions"><span class="icon">✉</span> Submissions</a>
+      <a href="settings.html" class="sidebar-link" data-nav-link="settings"><span class="icon">⚙</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="avatarInitial">·</div>
+        <div data-user-name>—</div>
+      </div>
+      <button class="btn btn-ghost sidebar-logout" data-logout>Log out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <button class="menu-toggle" data-menu-toggle aria-label="Toggle menu">☰</button>
+        <h1>Websites</h1>
+        <p class="subtitle">Every site you're collecting form submissions from.</p>
+      </div>
+      <button class="btn btn-primary" id="openCreateBtn">+ Add website</button>
+    </div>
+
+    <div class="card">
+      <div id="websitesWrap">
+        <div class="loading-state"><div class="spinner"></div>Loading websites...</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Create / Edit modal -->
+<div class="modal-overlay" id="websiteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add website</h2>
+      <button class="modal-close" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="modalError"></div>
+      <form id="websiteForm">
+        <input type="hidden" id="websiteId">
+        <div class="field">
+          <label for="websiteName">Website name</label>
+          <input type="text" id="websiteName" placeholder="Mike's Restaurant" required>
+        </div>
+        <div class="field">
+          <label for="websiteUrl">Website URL</label>
+          <input type="url" id="websiteUrl" placeholder="https://mikesrestaurant.com" required>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveWebsiteBtn">Save website</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/websites.js"></script>
+</body>
+</html>

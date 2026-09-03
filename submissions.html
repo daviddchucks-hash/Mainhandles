@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submissions — Handles</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar>
+    <a href="dashboard.html" class="brand"><span class="brand-mark">H</span> Handles</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link" data-nav-link="dashboard"><span class="icon">▦</span> Dashboard</a>
+      <a href="websites.html" class="sidebar-link" data-nav-link="websites"><span class="icon">◧</span> Websites</a>
+      <a href="forms.html" class="sidebar-link" data-nav-link="forms"><span class="icon">▤</span> Forms</a>
+      <a href="submissions.html" class="sidebar-link" data-nav-link="submissions"><span class="icon">✉</span> Submissions</a>
+      <a href="settings.html" class="sidebar-link" data-nav-link="settings"><span class="icon">⚙</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="avatarInitial">·</div>
+        <div data-user-name>—</div>
+      </div>
+      <button class="btn btn-ghost sidebar-logout" data-logout>Log out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <button class="menu-toggle" data-menu-toggle aria-label="Toggle menu">☰</button>
+        <h1>Submissions</h1>
+        <p class="subtitle">Everything your visitors have sent in.</p>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <select id="websiteFilter"><option value="">All websites</option></select>
+      <select id="formFilter"><option value="">All forms</option></select>
+      <select id="readFilter">
+        <option value="">All statuses</option>
+        <option value="false">Unread only</option>
+        <option value="true">Read only</option>
+      </select>
+      <input type="search" id="searchInput" placeholder="Search submissions...">
+    </div>
+
+    <div class="card">
+      <div id="submissionsWrap">
+        <div class="loading-state"><div class="spinner"></div>Loading submissions...</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Submission</h2>
+      <button class="modal-close" id="closeDetailBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="detailMeta" style="margin-bottom:16px;"></p>
+      <div class="kv-list" id="detailFields"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="deleteDetailBtn">Delete</button>
+      <button class="btn btn-secondary" id="toggleReadBtn">Mark unread</button>
+      <button class="btn btn-primary" id="closeDetailBtn2">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/submissions.js"></script>
+</body>
+</html>
