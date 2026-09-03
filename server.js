@@ -37,9 +37,18 @@ try {
 }
 
 try {
+  // Basic validation for the provided Realtime Database URL to catch common mistakes.
+  const dbUrl = (process.env.FIREBASE_DB_URL || '').trim();
+  const ok = /(?:firebaseio\.com|firebasedatabase\.app|default-rtdb)/i.test(dbUrl);
+  if (!ok) {
+    console.error('FIREBASE_DB_URL appears invalid:', dbUrl);
+    console.error('It should be the Realtime Database URL from the Firebase console, e.g. https://PROJECT-ID-default-rtdb.firebaseio.com');
+    process.exit(1);
+  }
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIREBASE_DB_URL
+    databaseURL: dbUrl
   });
 } catch (e) {
   console.error('Failed to initialize Firebase Admin:', e && e.message);
