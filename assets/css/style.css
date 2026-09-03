@@ -1,0 +1,13 @@
+:root{--bg:#f7f9fb;--accent:#2563eb;--muted:#6b7280}
+body{font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;color:#111}
+.container{max-width:980px;margin:0 auto;padding:20px}
+.site-header{background:#fff;border-bottom:1px solid #e6e9ee}
+.site-header .container{display:flex;align-items:center;justify-content:space-between}
+.site-header h1{margin:0}
+.site-header nav a{margin-left:12px;color:var(--muted);text-decoration:none}
+#hero{padding:60px 0}
+.btn{display:inline-block;padding:10px 16px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none}
+.auth{display:flex;gap:24px}
+.auth input{display:block;padding:8px;margin:6px 0;width:240px}
+#dashboard{background:#fff;padding:16px;border-radius:8px}
+.site-footer{padding:12px 0;background:#fff;border-top:1px solid #e6e9ee;margin-top:40px}

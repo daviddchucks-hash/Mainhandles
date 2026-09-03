@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Handles — Form Inbox for Websites</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Handles</h1>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#get-started">Get Started</a>
+        <a href="#dashboard" id="dashboardLink">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="hero">
+      <h2>Collect form submissions from any site</h2>
+      <p>Add a tiny script to your site and receive submissions in your Handles dashboard.</p>
+      <a class="btn" href="#get-started">Create account — it's free</a>
+    </section>
+
+    <section id="get-started">
+      <h3>Quick demo: Register / Login</h3>
+      <div class="auth">
+        <div>
+          <h4>Register</h4>
+          <input id="regEmail" placeholder="Email">
+          <input id="regPassword" placeholder="Password" type="password">
+          <button id="btnRegister">Register</button>
+        </div>
+        <div>
+          <h4>Login</h4>
+          <input id="loginEmail" placeholder="Email">
+          <input id="loginPassword" placeholder="Password" type="password">
+          <button id="btnLogin">Login</button>
+        </div>
+      </div>
+      <p id="authMessage"></p>
+    </section>
+
+    <section id="dashboard" style="display:none;">
+      <h3>Dashboard</h3>
+      <div id="stats"></div>
+      <div id="websites"></div>
+      <button id="btnLogout">Logout</button>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">&copy; Handles</div>
+  </footer>
+
+  <script>window.API_URL = 'https://new-handles.onrender.com';</script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

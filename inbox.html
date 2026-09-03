@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Handles — Inbox</title><link rel="stylesheet" href="assets/css/style.css"></head>
+<body>
+  <div class="container">
+    <header><h1>Submissions</h1><a href="forms.html">Back to Forms</a></header>
+    <section>
+      <input id="search" placeholder="Search submissions">
+      <button id="doSearch">Search</button>
+    </section>
+    <section>
+      <div id="subsList"></div>
+    </section>
+  </div>
+  <script>window.API_URL='https://new-handles.onrender.com'; const params=new URLSearchParams(location.search); window.WEBSITE_ID=params.get('website'); window.FORM_ID=params.get('form');</script>
+  <script src="assets/js/inbox.js"></script>
+</body></html>

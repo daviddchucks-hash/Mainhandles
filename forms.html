@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Handles — Forms</title><link rel="stylesheet" href="assets/css/style.css"></head>
+<body>
+  <div class="container">
+    <header><h1>Forms</h1><a href="websites.html">Back to Websites</a></header>
+    <section>
+      <h3>Create Form</h3>
+      <input id="formName" placeholder="Form Name">
+      <button id="createForm">Create</button>
+    </section>
+    <section>
+      <h3>Forms for Website</h3>
+      <div id="formsList"></div>
+    </section>
+  </div>
+  <script>window.API_URL='https://new-handles.onrender.com'; const params=new URLSearchParams(location.search); window.WEBSITE_ID=params.get('website');</script>
+  <script src="assets/js/forms.js"></script>
+</body></html>
