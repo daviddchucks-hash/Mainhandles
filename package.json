@@ -1,0 +1,9 @@
+{
+  "name": "mainhandles",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "cd handles-backend && npm install --no-audit --no-fund",
+    "start": "cd handles-backend && npm run start"
+  }
+}
