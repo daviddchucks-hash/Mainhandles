@@ -1,7 +1,7 @@
 // Simple integration helper (for static hosting):
 (function(){
   function send(formId, data){
-    try{fetch((window.HANDLES_API_URL||'https://new-handles.onrender.com') + '/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({formId:formId,fields:data,origin:location.href})});}catch(e){}
+    try{fetch((window.HANDLES_API_URL||'https://mainhandles.onrender.com') + '/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({formId:formId,fields:data,origin:location.href})});}catch(e){}
   }
   function serialize(form){
     var obj={};
