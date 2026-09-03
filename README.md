@@ -55,6 +55,26 @@ Local testing:
 npm install
 node server.js
 ```
+Render environment notes:
+
+- On Render, add `FIREBASE_SERVICE_ACCOUNT` as a secret environment variable. You can either paste the raw JSON (all on one line) or base64-encode the JSON and paste the base64 string. The server accepts both formats.
+
+	To base64-encode on macOS / Linux:
+
+	```bash
+	cat service-account.json | base64 | pbcopy
+	# paste into Render's FIREBASE_SERVICE_ACCOUNT value
+	```
+
+	To base64-encode on Windows (PowerShell):
+
+	```powershell
+	[Convert]::ToBase64String([IO.File]::ReadAllBytes('service-account.json')) | clip
+	# paste into Render's FIREBASE_SERVICE_ACCOUNT value
+	```
+
+	Ensure `FIREBASE_DB_URL` is set to your Realtime Database URL (e.g. `https://your-project.firebaseio.com`).
+
 
 Then open `index.html` in a browser (or use a simple static server such as `npx http-server` in the project folder) and set the API URL to your local server if needed.
 

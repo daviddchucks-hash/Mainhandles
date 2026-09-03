@@ -12,22 +12,38 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5500';
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
 // Initialize Firebase Admin with service account JSON in env
+// Support either raw JSON in FIREBASE_SERVICE_ACCOUNT or base64-encoded JSON.
 if (!process.env.FIREBASE_SERVICE_ACCOUNT || !process.env.FIREBASE_DB_URL) {
-  console.warn('FIREBASE_SERVICE_ACCOUNT or FIREBASE_DB_URL not set. Backend will fail if used without these.');
+  console.error('FIREBASE_SERVICE_ACCOUNT or FIREBASE_DB_URL not set. Aborting startup.');
+  console.error('Set these environment variables in Render (FIREBASE_SERVICE_ACCOUNT may be the JSON or base64-encoded JSON).');
+  process.exit(1);
 }
 
 let serviceAccount = null;
 try {
-  serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT) : null;
+  const saEnv = process.env.FIREBASE_SERVICE_ACCOUNT.trim();
+  if (saEnv.startsWith('{')) {
+    // raw JSON
+    serviceAccount = JSON.parse(saEnv);
+  } else {
+    // assume base64
+    const decoded = Buffer.from(saEnv, 'base64').toString('utf8');
+    serviceAccount = JSON.parse(decoded);
+  }
 } catch (e) {
-  console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT:', e && e.message);
+  console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT. Ensure it is valid JSON or base64-encoded JSON.');
+  console.error(e && e.message);
+  process.exit(1);
 }
 
-if (serviceAccount) {
+try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: process.env.FIREBASE_DB_URL
   });
+} catch (e) {
+  console.error('Failed to initialize Firebase Admin:', e && e.message);
+  process.exit(1);
 }
 
 const db = admin.database();
