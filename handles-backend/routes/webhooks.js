@@ -105,6 +105,21 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.post('/:id/rotate-secret', async (req, res, next) => {
+  try {
+    const webhook = await getOwnedWebhook(req.userId, req.params.id);
+    const secret = createWebhookSecret();
+    const updates = {
+      secretEncrypted: encryptSecret(secret),
+      updatedAt: Date.now()
+    };
+    await db.ref(`webhooks/${req.params.id}`).update(updates);
+    res.json({ webhook: publicWebhook(req.params.id, { ...webhook, ...updates }), secret });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.patch('/:id', async (req, res, next) => {
   try {
     const current = await getOwnedWebhook(req.userId, req.params.id);

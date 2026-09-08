@@ -18,7 +18,8 @@ async function requireApiKey(req, res, next) {
     let match = null;
     snap.forEach((child) => {
       const key = child.val();
-      if (!match && !key.revokedAt && safeEqualHex(key.hash, hashSecret(token))) {
+      const expiresAt = key.expiresAt ? new Date(`${key.expiresAt}T23:59:59.999Z`).getTime() : null;
+      if (!match && !key.revokedAt && (!expiresAt || expiresAt >= Date.now()) && safeEqualHex(key.hash, hashSecret(token))) {
         match = { id: child.key, ...key };
       }
     });

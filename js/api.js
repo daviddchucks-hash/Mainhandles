@@ -121,6 +121,7 @@ const Api = {
   listWebhooks: () => apiRequest('/api/webhooks'),
   createWebhook: (payload) => apiRequest('/api/webhooks', { method: 'POST', body: payload }),
   updateWebhook: (id, payload) => apiRequest(`/api/webhooks/${id}`, { method: 'PATCH', body: payload }),
+  rotateWebhookSecret: (id) => apiRequest(`/api/webhooks/${id}/rotate-secret`, { method: 'POST' }),
   deleteWebhook: (id) => apiRequest(`/api/webhooks/${id}`, { method: 'DELETE' }),
   testWebhook: (id) => apiRequest(`/api/webhooks/${id}/test`, { method: 'POST' }),
   listWebhookDeliveries: (id) => apiRequest(`/api/webhooks/${id}/deliveries`),

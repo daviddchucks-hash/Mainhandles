@@ -2,7 +2,7 @@ const express = require('express');
 const { db } = require('../config/firebase');
 const { requireAuth } = require('../middleware/auth');
 const { createApiKey } = require('../utils/secrets');
-const { isNonEmptyString } = require('../utils/validate');
+const { isNonEmptyString, isDateOnly } = require('../utils/validate');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -14,6 +14,7 @@ function publicKey(id, key) {
     prefix: key.prefix,
     createdAt: key.createdAt,
     lastUsedAt: key.lastUsedAt || null,
+    expiresAt: key.expiresAt || null,
     revokedAt: key.revokedAt || null
   };
 }
@@ -32,9 +33,12 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const { name } = req.body || {};
+    const { name, expiresAt } = req.body || {};
     if (!isNonEmptyString(name, 100)) {
       return res.status(400).json({ error: 'Please provide a name for this API key.' });
+    }
+    if (!isDateOnly(expiresAt)) {
+      return res.status(400).json({ error: 'Please provide a valid expiration date (YYYY-MM-DD).' });
     }
 
     const generated = createApiKey();
@@ -45,6 +49,7 @@ router.post('/', async (req, res, next) => {
       prefix: generated.prefix,
       hash: generated.hash,
       createdAt: Date.now(),
+      expiresAt,
       revokedAt: null
     };
     await db.ref(`apiKeys/${id}`).set(key);
@@ -61,8 +66,9 @@ async function revoke(req, res, next) {
     const snap = await ref.get();
     if (!snap.exists()) return res.status(404).json({ error: 'API key not found.' });
     if (snap.val().userId !== req.userId) return res.status(403).json({ error: 'You do not have access to this API key.' });
-    await ref.update({ revokedAt: Date.now() });
-    res.json({ apiKey: publicKey(req.params.id, { ...snap.val(), revokedAt: Date.now() }) });
+    const revokedAt = Date.now();
+    await ref.update({ revokedAt });
+    res.json({ apiKey: publicKey(req.params.id, { ...snap.val(), revokedAt }) });
   } catch (err) {
     next(err);
   }

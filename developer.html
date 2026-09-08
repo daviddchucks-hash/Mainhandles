@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer — Handles</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" data-sidebar>
+    <a href="dashboard.html" class="brand"><span class="brand-mark">H</span> Handles</a>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link" data-nav-link="dashboard"><span class="icon">▦</span> Dashboard</a>
+      <a href="websites.html" class="sidebar-link" data-nav-link="websites"><span class="icon">◧</span> Websites</a>
+      <a href="forms.html" class="sidebar-link" data-nav-link="forms"><span class="icon">▤</span> Forms</a>
+      <a href="submissions.html" class="sidebar-link" data-nav-link="submissions"><span class="icon">✉</span> Submissions</a>
+      <a href="settings.html" class="sidebar-link" data-nav-link="settings"><span class="icon">⚙</span> Settings</a>
+      <a href="developer.html" class="sidebar-link" data-nav-link="developer"><span class="icon">⌘</span> Developer</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="avatarInitial">·</div>
+        <div data-user-name>—</div>
+      </div>
+      <button class="btn btn-ghost sidebar-logout" data-logout>Log out</button>
+    </div>
+  </aside>
+
+  <main class="main-content" style="max-width:960px;">
+    <div class="page-header">
+      <div>
+        <button class="menu-toggle" data-menu-toggle aria-label="Toggle menu">☰</button>
+        <h1>Developer</h1>
+        <p class="subtitle">Connect your applications to Handles with API keys and webhooks.</p>
+      </div>
+      <a class="btn btn-secondary" href="settings.html">Account settings</a>
+    </div>
+
+    <div class="card card-pad">
+      <h2 style="font-size:16px;">Developer API keys</h2>
+      <p>Create keys for server-to-server access to the versioned Handles API. Keys expire at the end of the date you choose. The full key is shown once.</p>
+      <div class="form-error" id="apiKeyError"></div>
+      <div id="newApiKeyNotice" class="secret-notice" hidden></div>
+      <form id="apiKeyForm" class="inline-form">
+        <div class="field" style="flex:1;">
+          <label for="apiKeyName">Key name</label>
+          <input type="text" id="apiKeyName" placeholder="Production website" maxlength="100" required>
+        </div>
+        <div class="field">
+          <label for="apiKeyExpiresAt">Expires on</label>
+          <input type="date" id="apiKeyExpiresAt" required>
+          <div class="hint">The key stops working after this date.</div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="createApiKeyBtn">Create key</button>
+      </form>
+      <div id="apiKeysWrap"><div class="loading-state"><div class="spinner"></div>Loading API keys...</div></div>
+    </div>
+
+    <div class="card card-pad" style="margin-top:20px;">
+      <h2 style="font-size:16px;">Webhooks</h2>
+      <p>Connect an endpoint to receive signed <code>submission.created</code> events for a website or a specific form.</p>
+      <div class="form-error" id="webhookError"></div>
+      <div id="newWebhookNotice" class="secret-notice" hidden></div>
+      <form id="webhookForm">
+        <div class="field">
+          <label for="webhookName">Name</label>
+          <input type="text" id="webhookName" placeholder="Production submissions" maxlength="120" required>
+        </div>
+        <div class="field">
+          <label for="webhookEndpoint">Endpoint URL</label>
+          <input type="url" id="webhookEndpoint" placeholder="https://example.com/handles-webhook" required>
+        </div>
+        <div class="field">
+          <label for="webhookWebsite">Website scope</label>
+          <select id="webhookWebsite"><option value="">All websites</option></select>
+        </div>
+        <div class="field">
+          <label for="webhookForm">Form scope</label>
+          <select id="webhookForm"><option value="">All forms</option></select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="createWebhookBtn">Connect webhook</button>
+      </form>
+      <div id="webhooksWrap"><div class="loading-state"><div class="spinner"></div>Loading webhooks...</div></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="editWebhookModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Edit webhook</h2>
+      <button class="modal-close" id="closeEditWebhookBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="editWebhookError"></div>
+      <form id="editWebhookForm">
+        <div class="field">
+          <label for="editWebhookName">Name</label>
+          <input type="text" id="editWebhookName" maxlength="120" required>
+        </div>
+        <div class="field">
+          <label for="editWebhookEndpoint">Endpoint URL</label>
+          <input type="url" id="editWebhookEndpoint" required>
+        </div>
+        <div class="field">
+          <label for="editWebhookWebsite">Website scope</label>
+          <select id="editWebhookWebsite"><option value="">All websites</option></select>
+        </div>
+        <div class="field">
+          <label for="editWebhookFormScope">Form scope</label>
+          <select id="editWebhookFormScope"><option value="">All forms</option></select>
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="editWebhookEnabled">
+          Webhook enabled
+        </label>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelEditWebhookBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveEditWebhookBtn">Save webhook</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/developer.js"></script>
+</body>
+</html>

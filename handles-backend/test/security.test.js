@@ -17,6 +17,7 @@ const {
   validateConfiguredSubmission,
   publicSubmission
 } = require('../utils/submissions');
+const { isDateOnly } = require('../utils/validate');
 const { webhookMatches, signWebhookBody } = require('../utils/webhook');
 
 test('API keys are random, prefixed, and stored as one-way hashes', () => {
@@ -35,6 +36,12 @@ test('webhook secrets encrypt and decrypt without storing plaintext', () => {
   const encrypted = encryptSecret(secret);
   assert.notEqual(encrypted, secret);
   assert.equal(decryptSecret(encrypted), secret);
+});
+
+test('API-key expiration accepts real calendar dates only', () => {
+  assert.equal(isDateOnly('2030-02-28'), true);
+  assert.equal(isDateOnly('2030-02-30'), false);
+  assert.equal(isDateOnly('not-a-date'), false);
 });
 
 test('developer submissions accept configured fields and reject invalid required/type data', () => {
