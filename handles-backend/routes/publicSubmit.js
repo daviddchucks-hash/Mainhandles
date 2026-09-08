@@ -15,6 +15,40 @@ const submitLimiter = rateLimit({
   message: { error: 'Too many submissions from this device. Please try again shortly.' }
 });
 
+function getConfiguredFields(formFields) {
+  if (Array.isArray(formFields)) return formFields.filter(Boolean);
+  if (formFields && typeof formFields === 'object') return Object.values(formFields).filter(Boolean);
+  return [];
+}
+
+function comparableFieldName(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Older customer sites often use first-name/firstName while a dashboard form
+// uses first_name. Keep the dashboard's canonical key, but accept these
+// harmless naming variations so a valid form is not discarded as empty.
+function mapIncomingFieldNames(rawFields, fields) {
+  if (!rawFields || typeof rawFields !== 'object') return {};
+
+  const aliases = new Map();
+  fields.forEach((field) => {
+    if (!field || !field.name) return;
+    aliases.set(comparableFieldName(field.name), field.name);
+    if (field.label) aliases.set(comparableFieldName(field.label), field.name);
+  });
+
+  const mapped = {};
+  Object.keys(rawFields).forEach((key) => {
+    if (key === 'handles_hp') return;
+    const target = fields.some((field) => field && field.name === key)
+      ? key
+      : aliases.get(comparableFieldName(key));
+    if (target && mapped[target] === undefined) mapped[target] = rawFields[key];
+  });
+  return mapped;
+}
+
 // POST /api/public/submit/:formId
 router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
   try {
@@ -47,13 +81,16 @@ router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
     const rawFields = body.fields && typeof body.fields === 'object'
       ? body.fields
       : body;
-    const configuredFields = Array.isArray(form.fields) ? form.fields : [];
-    const allowedFieldNames = configuredFields
+    const fieldDefinitions = getConfiguredFields(form.fields);
+    const allowedFieldNames = fieldDefinitions
       .map((field) => field && field.name)
       .filter(Boolean);
-    const data = sanitizeSubmissionFields(rawFields, allowedFieldNames);
+    const data = sanitizeSubmissionFields(
+      mapIncomingFieldNames(rawFields, fieldDefinitions),
+      allowedFieldNames
+    );
 
-    const requiredMissing = configuredFields
+    const requiredMissing = fieldDefinitions
       .filter((f) => f.required)
       .filter((f) => {
         const value = data[f.name];
@@ -100,7 +137,7 @@ router.get('/form/:formId', async (req, res, next) => {
         id: req.params.formId,
         name: form.name,
         enabled: form.enabled,
-        fields: Array.isArray(form.fields) ? form.fields : []
+        fields: getConfiguredFields(form.fields)
       }
     });
   } catch (err) {
