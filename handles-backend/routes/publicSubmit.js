@@ -1,7 +1,8 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const { db } = require('../config/firebase');
-const { sanitizeSubmissionFields } = require('../utils/validate');
+const { getConfiguredFields, validateConfiguredSubmission } = require('../utils/submissions');
+const { queueSubmissionCreated } = require('../services/webhooks');
 
 const router = express.Router();
 
@@ -14,40 +15,6 @@ const submitLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Too many submissions from this device. Please try again shortly.' }
 });
-
-function getConfiguredFields(formFields) {
-  if (Array.isArray(formFields)) return formFields.filter(Boolean);
-  if (formFields && typeof formFields === 'object') return Object.values(formFields).filter(Boolean);
-  return [];
-}
-
-function comparableFieldName(value) {
-  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-// Older customer sites often use first-name/firstName while a dashboard form
-// uses first_name. Keep the dashboard's canonical key, but accept these
-// harmless naming variations so a valid form is not discarded as empty.
-function mapIncomingFieldNames(rawFields, fields) {
-  if (!rawFields || typeof rawFields !== 'object') return {};
-
-  const aliases = new Map();
-  fields.forEach((field) => {
-    if (!field || !field.name) return;
-    aliases.set(comparableFieldName(field.name), field.name);
-    if (field.label) aliases.set(comparableFieldName(field.label), field.name);
-  });
-
-  const mapped = {};
-  Object.keys(rawFields).forEach((key) => {
-    if (key === 'handles_hp') return;
-    const target = fields.some((field) => field && field.name === key)
-      ? key
-      : aliases.get(comparableFieldName(key));
-    if (target && mapped[target] === undefined) mapped[target] = rawFields[key];
-  });
-  return mapped;
-}
 
 // POST /api/public/submit/:formId
 router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
@@ -82,43 +49,22 @@ router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
       ? body.fields
       : body;
     const fieldDefinitions = getConfiguredFields(form.fields);
-    const allowedFieldNames = fieldDefinitions
-      .map((field) => field && field.name)
-      .filter(Boolean);
-    const data = sanitizeSubmissionFields(
-      mapIncomingFieldNames(rawFields, fieldDefinitions),
-      allowedFieldNames
-    );
-
-    const requiredMissing = fieldDefinitions
-      .filter((f) => f.required)
-      .filter((f) => {
-        const value = data[f.name];
-        return value === undefined || value === null ||
-          (typeof value === 'string' && value.trim() === '');
-      });
-    if (requiredMissing.length > 0) {
-      return res.status(400).json({
-        error: `Missing required field(s): ${requiredMissing.map((f) => f.label).join(', ')}`
-      });
-    }
-
-    if (Object.keys(data).length === 0) {
-      return res.status(400).json({ error: 'Submission contained no valid fields.' });
-    }
+    const result = validateConfiguredSubmission(rawFields, fieldDefinitions);
+    if (result.error) return res.status(400).json({ error: result.error });
 
     const id = db.ref('submissions').push().key;
     const submission = {
       userId: form.userId,
       websiteId: form.websiteId,
       formId,
-      data,
+      data: result.data,
       read: false,
       createdAt: Date.now(),
       ip: (req.headers['x-forwarded-for'] || req.ip || '').toString().split(',')[0].trim().slice(0, 100)
     };
 
     await db.ref(`submissions/${id}`).set(submission);
+    queueSubmissionCreated({ id, ...submission });
     res.status(201).json({ success: true });
   } catch (err) {
     next(err);

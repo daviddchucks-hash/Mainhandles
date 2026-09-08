@@ -9,6 +9,9 @@ const formRoutes = require('./routes/forms');
 const submissionRoutes = require('./routes/submissions');
 const dashboardRoutes = require('./routes/dashboard');
 const publicSubmitRoutes = require('./routes/publicSubmit');
+const developerApiRoutes = require('./routes/developerApi');
+const apiKeyRoutes = require('./routes/apiKeys');
+const webhookRoutes = require('./routes/webhooks');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 // Fail fast with a clear message if required config is missing, rather than
@@ -58,6 +61,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok', time: Date.now() }));
 
 // Public, unauthenticated routes (used by the embed script on customer sites)
 app.use('/api/public', openCors, publicSubmitRoutes);
+app.use('/api/v1', developerApiRoutes);
 
 // The integration script customers embed with <script src=".../forms.js">
 app.get('/forms.js', openCors, (req, res) => {
@@ -72,6 +76,8 @@ app.use('/api/websites', dashboardCors, websiteRoutes);
 app.use('/api/forms', dashboardCors, formRoutes);
 app.use('/api/submissions', dashboardCors, submissionRoutes);
 app.use('/api/dashboard', dashboardCors, dashboardRoutes);
+app.use('/api/api-keys', dashboardCors, apiKeyRoutes);
+app.use('/api/webhooks', dashboardCors, webhookRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

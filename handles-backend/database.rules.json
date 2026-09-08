@@ -6,6 +6,9 @@
     "emailIndex": {},
     "websites": { ".indexOn": ["userId"] },
     "forms": { ".indexOn": ["userId", "websiteId"] },
-    "submissions": { ".indexOn": ["userId", "websiteId", "formId"] }
+    "submissions": { ".indexOn": ["userId", "websiteId", "formId"] },
+    "apiKeys": { ".indexOn": ["userId", "prefix"] },
+    "webhooks": { ".indexOn": ["userId", "websiteId", "formId"] },
+    "webhookDeliveries": { ".indexOn": ["userId", "webhookId", "createdAt"] }
   }
 }

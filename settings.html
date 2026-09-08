@@ -26,7 +26,7 @@
     </div>
   </aside>
 
-  <main class="main-content" style="max-width:640px;">
+  <main class="main-content" style="max-width:960px;">
     <div class="page-header">
       <div>
         <button class="menu-toggle" data-menu-toggle aria-label="Toggle menu">☰</button>
@@ -69,6 +69,48 @@
         </div>
         <button type="submit" class="btn btn-primary" id="savePasswordBtn">Update password</button>
       </form>
+    </div>
+
+    <div class="card card-pad" style="margin-top:20px;">
+      <h2 style="font-size:16px;">Developer API keys</h2>
+      <p>Create keys for server-to-server access to the versioned Handles API. The full key is shown once.</p>
+      <div class="form-error" id="apiKeyError"></div>
+      <div id="newApiKeyNotice" class="secret-notice" hidden></div>
+      <form id="apiKeyForm" class="inline-form">
+        <div class="field" style="flex:1;">
+          <label for="apiKeyName">Key name</label>
+          <input type="text" id="apiKeyName" placeholder="Production website" maxlength="100" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="createApiKeyBtn">Create key</button>
+      </form>
+      <div id="apiKeysWrap"><div class="loading-state"><div class="spinner"></div>Loading API keys...</div></div>
+    </div>
+
+    <div class="card card-pad" style="margin-top:20px;">
+      <h2 style="font-size:16px;">Webhooks</h2>
+      <p>Receive signed <code>submission.created</code> events for a website or a specific form.</p>
+      <div class="form-error" id="webhookError"></div>
+      <div id="newWebhookNotice" class="secret-notice" hidden></div>
+      <form id="webhookForm">
+        <div class="field">
+          <label for="webhookName">Name</label>
+          <input type="text" id="webhookName" placeholder="Production submissions" maxlength="120" required>
+        </div>
+        <div class="field">
+          <label for="webhookEndpoint">Endpoint URL</label>
+          <input type="url" id="webhookEndpoint" placeholder="https://example.com/handles-webhook" required>
+        </div>
+        <div class="field">
+          <label for="webhookWebsite">Website scope</label>
+          <select id="webhookWebsite"><option value="">All websites</option></select>
+        </div>
+        <div class="field">
+          <label for="webhookForm">Form scope</label>
+          <select id="webhookForm"><option value="">All forms</option></select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="createWebhookBtn">Create webhook</button>
+      </form>
+      <div id="webhooksWrap"><div class="loading-state"><div class="spinner"></div>Loading webhooks...</div></div>
     </div>
   </main>
 </div>

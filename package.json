@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "cd handles-backend && npm install --no-audit --no-fund",
-    "start": "cd handles-backend && npm run start"
+    "start": "cd handles-backend && npm run start",
+    "test": "cd handles-backend && npm test"
   }
 }

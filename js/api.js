@@ -112,5 +112,18 @@ const Api = {
   },
   getSubmission: (id) => apiRequest(`/api/submissions/${id}`),
   markSubmission: (id, read) => apiRequest(`/api/submissions/${id}`, { method: 'PATCH', body: { read } }),
-  deleteSubmission: (id) => apiRequest(`/api/submissions/${id}`, { method: 'DELETE' })
+  deleteSubmission: (id) => apiRequest(`/api/submissions/${id}`, { method: 'DELETE' }),
+
+  listApiKeys: () => apiRequest('/api/api-keys'),
+  createApiKey: (payload) => apiRequest('/api/api-keys', { method: 'POST', body: payload }),
+  revokeApiKey: (id) => apiRequest(`/api/api-keys/${id}`, { method: 'DELETE' }),
+
+  listWebhooks: () => apiRequest('/api/webhooks'),
+  createWebhook: (payload) => apiRequest('/api/webhooks', { method: 'POST', body: payload }),
+  updateWebhook: (id, payload) => apiRequest(`/api/webhooks/${id}`, { method: 'PATCH', body: payload }),
+  deleteWebhook: (id) => apiRequest(`/api/webhooks/${id}`, { method: 'DELETE' }),
+  testWebhook: (id) => apiRequest(`/api/webhooks/${id}/test`, { method: 'POST' }),
+  listWebhookDeliveries: (id) => apiRequest(`/api/webhooks/${id}/deliveries`),
+  retryWebhookDelivery: (webhookId, deliveryId) =>
+    apiRequest(`/api/webhooks/${webhookId}/deliveries/${deliveryId}/retry`, { method: 'POST' })
 };
