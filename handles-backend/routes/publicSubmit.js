@@ -32,7 +32,7 @@ router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
     }
     const form = formSnap.val();
 
-    if (!form.enabled) {
+    if (form.enabled === false) {
       return res.status(403).json({ error: 'This form is not currently accepting submissions.' });
     }
 
@@ -42,12 +42,24 @@ router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
       return res.status(201).json({ success: true });
     }
 
-    const allowedFieldNames = form.fields.map((f) => f.name);
-    const data = sanitizeSubmissionFields(body.fields, allowedFieldNames);
+    // `fields` is the current payload shape. Falling back to the body keeps
+    // older embeds working if they posted the field values at the top level.
+    const rawFields = body.fields && typeof body.fields === 'object'
+      ? body.fields
+      : body;
+    const configuredFields = Array.isArray(form.fields) ? form.fields : [];
+    const allowedFieldNames = configuredFields
+      .map((field) => field && field.name)
+      .filter(Boolean);
+    const data = sanitizeSubmissionFields(rawFields, allowedFieldNames);
 
-    const requiredMissing = form.fields
+    const requiredMissing = configuredFields
       .filter((f) => f.required)
-      .filter((f) => !data[f.name] || String(data[f.name]).trim() === '');
+      .filter((f) => {
+        const value = data[f.name];
+        return value === undefined || value === null ||
+          (typeof value === 'string' && value.trim() === '');
+      });
     if (requiredMissing.length > 0) {
       return res.status(400).json({
         error: `Missing required field(s): ${requiredMissing.map((f) => f.label).join(', ')}`
@@ -88,7 +100,7 @@ router.get('/form/:formId', async (req, res, next) => {
         id: req.params.formId,
         name: form.name,
         enabled: form.enabled,
-        fields: form.fields
+        fields: Array.isArray(form.fields) ? form.fields : []
       }
     });
   } catch (err) {

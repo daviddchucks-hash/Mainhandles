@@ -24,6 +24,7 @@
 
   let websites = [];
   let fieldRowCount = 0;
+  let formsById = {};
   const FIELD_TYPES = ['text', 'email', 'tel', 'number', 'date', 'time', 'textarea', 'select', 'checkbox'];
 
   function fieldRowHtml(field) {
@@ -165,18 +166,58 @@
     }
   };
 
+  function htmlAttribute(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function inputSnippet(field, index) {
+    const id = `handles-${field.name}-${index}`;
+    const required = field.required ? ' required' : '';
+    const label = escapeHtml(field.label || field.name);
+    const name = htmlAttribute(field.name);
+    const fieldId = htmlAttribute(id);
+
+    if (field.type === 'textarea') {
+      return `  <label for="${fieldId}">${label}</label>\n` +
+        `  <textarea id="${fieldId}" name="${name}"${required}></textarea>`;
+    }
+    if (field.type === 'select') {
+      return `  <label for="${fieldId}">${label}</label>\n` +
+        `  <select id="${fieldId}" name="${name}"${required}>\n` +
+        `    <option value="">Select ${label}</option>\n` +
+        `  </select>`;
+    }
+    if (field.type === 'checkbox') {
+      return `  <label><input type="checkbox" id="${fieldId}" name="${name}" value="true"${required}> ${label}</label>`;
+    }
+    return `  <label for="${fieldId}">${label}</label>\n` +
+      `  <input type="${field.type || 'text'}" id="${fieldId}" name="${name}"${required}>`;
+  }
+
   window.showSnippet = function (formId) {
-    const scriptTag = `<script src="https://mainhandles.onrender.com/forms.js"><\/script>`;
+    const form = formsById[formId];
+    if (!form) {
+      showToast('Form details are still loading. Try again.', 'error');
+      return;
+    }
+
+    // The website ID makes the script URL unique per website. It also gives
+    // us a stable cache key when the same website has multiple forms.
+    const scriptUrl = `https://mainhandles.onrender.com/forms.js?websiteId=${encodeURIComponent(form.websiteId)}`;
+    const scriptTag = `<script src="${htmlAttribute(scriptUrl)}"><\/script>`;
     const formTag = `data-handles-form="${formId}"`;
     document.getElementById('scriptSnippet').textContent = scriptTag;
     document.getElementById('formSnippet').textContent = formTag;
+    const fields = (form.fields || []).map(inputSnippet).join('\n\n');
     document.getElementById('fullSnippet').textContent =
 `${scriptTag}
 
 <form ${formTag}>
-  <input name="name" placeholder="Name">
-  <input name="email" placeholder="Email">
-  <textarea name="message" placeholder="Message"></textarea>
+${fields}
   <button type="submit">Send</button>
 </form>`;
     snippetModal.classList.add('is-open');
@@ -202,6 +243,7 @@
     try {
       const [{ websites: sites }, { forms }] = await Promise.all([Api.listWebsites(), Api.listForms()]);
       websites = sites;
+      formsById = Object.fromEntries(forms.map((form) => [form.id, form]));
 
       if (websiteFilter.options.length <= 1) {
         websiteFilter.innerHTML = '<option value="">All websites</option>' +

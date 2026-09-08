@@ -56,6 +56,22 @@ either layout works without changes.)
 Every internal link and asset reference is relative, so the site works
 correctly whether it's served at the domain root or under `/Mainhandles/`.
 
+## Form integration
+
+The Forms page generates a complete example using the exact field names and
+types saved for that form. Copy that example instead of replacing it with
+generic `name`, `email`, and `message` fields: the API accepts the configured
+field names so submissions are stored against the correct form.
+
+Each website also receives its own script URL, for example:
+
+```html
+<script src="https://mainhandles.onrender.com/forms.js?websiteId=YOUR_WEBSITE_ID"></script>
+```
+
+The `websiteId` is intentionally different for every website. The
+`data-handles-form` value remains unique per form.
+
 ## Backend
 
 This repo is frontend-only. The API (Node/Express + Firebase) deploys
