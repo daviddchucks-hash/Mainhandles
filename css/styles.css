@@ -524,6 +524,7 @@ tr.clickable:hover { background: #fafafc; }
 .inline-form .field { margin-bottom: 0; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .section-heading h2 { margin-bottom: 8px; }
+.webhook-connect-panel { margin: 18px 0 22px; padding: 18px; background: #fafafc; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
 .secret-notice {
   background: var(--color-warning-bg);
   color: var(--color-warning);

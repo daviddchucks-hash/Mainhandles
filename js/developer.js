@@ -19,6 +19,7 @@
   const createWebhookBtn = document.getElementById('createWebhookBtn');
   const webhookWebsite = document.getElementById('webhookWebsite');
   const webhookFormSelect = document.getElementById('webhookForm');
+  const webhookConnectPanel = document.getElementById('webhookConnectPanel');
   const editWebhookModal = document.getElementById('editWebhookModal');
   const editWebhookForm = document.getElementById('editWebhookForm');
   const editWebhookError = document.getElementById('editWebhookError');
@@ -126,10 +127,17 @@
   webhookWebsite.addEventListener('change', populateWebhookForms);
 
   window.openWebhookCreate = function () {
-    const form = document.getElementById('webhookForm');
-    if (!form) return;
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    document.getElementById('webhookName').focus();
+    if (!webhookConnectPanel) return;
+    const willOpen = webhookConnectPanel.hidden;
+    webhookConnectPanel.hidden = !willOpen;
+    if (connectWebhookBtn) {
+      connectWebhookBtn.setAttribute('aria-expanded', String(willOpen));
+      connectWebhookBtn.textContent = willOpen ? 'Hide connection form' : 'Connect webhook';
+    }
+    if (willOpen) {
+      webhookConnectPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('webhookName').focus();
+    }
   };
 
   const connectWebhookBtn = document.getElementById('connectWebhookBtn');

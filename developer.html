@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Developer — Handles</title>
-<link rel="stylesheet" href="css/styles.css?v=3">
+<link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 <body>
 <div class="app-shell">
@@ -60,12 +60,13 @@
     <div class="card card-pad" style="margin-top:20px;">
       <div class="section-heading">
         <h2 style="font-size:16px;">Webhooks</h2>
-        <button type="button" class="btn btn-primary btn-sm" id="connectWebhookBtn">Connect webhook</button>
+        <button type="button" class="btn btn-primary btn-sm" id="connectWebhookBtn" aria-expanded="false">Connect webhook</button>
       </div>
       <p>Connect an endpoint to receive signed <code>submission.created</code> events for a website or a specific form.</p>
       <div class="form-error" id="webhookError"></div>
       <div id="newWebhookNotice" class="secret-notice" hidden></div>
-      <form id="webhookForm">
+      <div id="webhookConnectPanel" class="webhook-connect-panel" hidden>
+        <form id="webhookForm">
         <div class="field">
           <label for="webhookName">Name</label>
           <input type="text" id="webhookName" placeholder="Production submissions" maxlength="120" required>
@@ -83,7 +84,8 @@
           <select id="webhookForm"><option value="">All forms</option></select>
         </div>
         <button type="submit" class="btn btn-primary" id="createWebhookBtn">Connect webhook</button>
-      </form>
+        </form>
+      </div>
       <div id="webhooksWrap"><div class="loading-state"><div class="spinner"></div>Loading webhooks...</div></div>
     </div>
   </main>
@@ -127,8 +129,8 @@
   </div>
 </div>
 
-<script src="js/api.js?v=3"></script>
-<script src="js/nav.js?v=3"></script>
-<script src="js/developer.js?v=3"></script>
+<script src="js/api.js?v=4"></script>
+<script src="js/nav.js?v=4"></script>
+<script src="js/developer.js?v=4"></script>
 </body>
 </html>
