@@ -125,6 +125,16 @@
 
   webhookWebsite.addEventListener('change', populateWebhookForms);
 
+  window.openWebhookCreate = function () {
+    const form = document.getElementById('webhookForm');
+    if (!form) return;
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('webhookName').focus();
+  };
+
+  const connectWebhookBtn = document.getElementById('connectWebhookBtn');
+  if (connectWebhookBtn) connectWebhookBtn.addEventListener('click', window.openWebhookCreate);
+
   async function loadWebhooks() {
     try {
       const { webhooks } = await Api.listWebhooks();
@@ -132,7 +142,7 @@
       const websiteNames = Object.fromEntries(settingsWebsites.map((site) => [site.id, site.name]));
       const formNames = Object.fromEntries(settingsForms.map((form) => [form.id, form.name]));
       if (!webhooks.length) {
-        webhooksWrap.innerHTML = '<div class="empty-state" style="padding:24px 0;"><p>No webhooks yet. Use the form above to connect your first webhook.</p></div>';
+        webhooksWrap.innerHTML = '<div class="empty-state" style="padding:24px 0;"><p>No webhooks yet.</p><button type="button" class="btn btn-primary btn-sm" onclick="openWebhookCreate()">Connect your first webhook</button></div>';
         return;
       }
       webhooksWrap.innerHTML = webhooks.map((webhook) => {
