@@ -5,6 +5,44 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 router.use(requireAuth);
 
+async function getOwnedFormIds(userId) {
+  const snap = await db.ref('forms').orderByChild('userId').equalTo(userId).get();
+  const formIds = new Set();
+  snap.forEach((child) => formIds.add(child.key));
+  return formIds;
+}
+
+async function listOwnedSubmissions(userId) {
+  const [userSubmissionSnap, ownedFormIds] = await Promise.all([
+    db.ref('submissions').orderByChild('userId').equalTo(userId).get(),
+    getOwnedFormIds(userId)
+  ]);
+
+  const submissions = new Map();
+  userSubmissionSnap.forEach((child) => {
+    submissions.set(child.key, { id: child.key, ...child.val() });
+  });
+
+  // Older submissions may not have the current userId metadata (for example,
+  // if they were created before ownership was stored on each submission).
+  // The form is still an authoritative ownership boundary, so include those
+  // records by the user's owned form IDs as well.
+  const formSubmissionSnaps = await Promise.all(
+    Array.from(ownedFormIds, (formId) =>
+      db.ref('submissions').orderByChild('formId').equalTo(formId).get()
+    )
+  );
+  formSubmissionSnaps.forEach((snap) => {
+    snap.forEach((child) => {
+      if (!submissions.has(child.key)) {
+        submissions.set(child.key, { id: child.key, ...child.val() });
+      }
+    });
+  });
+
+  return Array.from(submissions.values());
+}
+
 async function getOwnedSubmission(userId, id) {
   const snap = await db.ref(`submissions/${id}`).get();
   if (!snap.exists()) {
@@ -13,12 +51,22 @@ async function getOwnedSubmission(userId, id) {
     throw err;
   }
   const submission = snap.val();
-  if (submission.userId !== userId) {
+  if (submission.userId === userId) return submission;
+
+  // Keep access to submissions created by older versions of the API where
+  // userId was not copied onto the submission record.
+  const formSnap = submission.formId
+    ? await db.ref(`forms/${submission.formId}`).get()
+    : null;
+  if (formSnap && formSnap.exists() && formSnap.val().userId === userId) {
+    return submission;
+  }
+
+  {
     const err = new Error('You do not have access to this submission.');
     err.status = 403;
     throw err;
   }
-  return submission;
 }
 
 // GET /api/submissions?websiteId=&formId=&read=true|false&search=
@@ -26,9 +74,7 @@ router.get('/', async (req, res, next) => {
   try {
     const { websiteId, formId, read, search } = req.query;
 
-    const snap = await db.ref('submissions').orderByChild('userId').equalTo(req.userId).get();
-    let submissions = [];
-    snap.forEach((child) => submissions.push({ id: child.key, ...child.val() }));
+    let submissions = await listOwnedSubmissions(req.userId);
 
     if (websiteId) submissions = submissions.filter((s) => s.websiteId === websiteId);
     if (formId) submissions = submissions.filter((s) => s.formId === formId);
