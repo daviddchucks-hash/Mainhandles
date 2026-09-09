@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const { db } = require('../config/firebase');
 const { getConfiguredFields, validateConfiguredSubmission } = require('../utils/submissions');
 const { queueSubmissionCreated } = require('../services/webhooks');
+const { queueEmailNotification } = require('../services/emailNotifications');
 
 const router = express.Router();
 
@@ -65,6 +66,7 @@ router.post('/submit/:formId', submitLimiter, async (req, res, next) => {
 
     await db.ref(`submissions/${id}`).set(submission);
     queueSubmissionCreated({ id, ...submission });
+    queueEmailNotification({ id, ...submission });
     res.status(201).json({ success: true });
   } catch (err) {
     next(err);

@@ -49,7 +49,7 @@ per-user ownership in application code before touching the database.
 
 ## API overview
 
-- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`, `PATCH /api/auth/account`
+- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`, `GET/PATCH /api/auth/notifications`, `PATCH /api/auth/account`
 - `GET/POST /api/websites`, `GET/PATCH/DELETE /api/websites/:id`
 - `GET/POST /api/forms`, `GET/PATCH/DELETE /api/forms/:id`
 - `GET /api/submissions`, `GET/PATCH/DELETE /api/submissions/:id`
@@ -58,3 +58,13 @@ per-user ownership in application code before touching the database.
 - `GET /forms.js` - the integration script served to customer websites
 
 All `/api/*` routes except `/api/public/*` require `Authorization: Bearer <token>`.
+
+## Email notifications
+
+Email notifications are stored per user under `users/{uid}/emailNotifications`.
+Set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_FROM_NAME`, and `DASHBOARD_URL`
+in Render's Environment tab. The submission is written to Firebase before the
+notification job runs, so a missing key or Resend outage never makes a valid
+submission fail. Delivery attempts are recorded under
+`emailNotificationDeliveries/{submissionId}` and use a Resend idempotency key to
+avoid duplicate messages when processing is retried.

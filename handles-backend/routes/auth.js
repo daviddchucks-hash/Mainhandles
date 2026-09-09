@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const { db } = require('../config/firebase');
 const { requireAuth } = require('../middleware/auth');
 const { isEmail, isNonEmptyString, sanitizeEmailKey } = require('../utils/validate');
+const { getEmailNotificationSettings } = require('../utils/emailNotifications');
 
 const router = express.Router();
 
@@ -24,7 +25,13 @@ function signToken(uid) {
 }
 
 function publicUser(uid, user) {
-  return { id: uid, name: user.name, email: user.email, createdAt: user.createdAt };
+  return {
+    id: uid,
+    name: user.name,
+    email: user.email,
+    createdAt: user.createdAt,
+    emailNotifications: getEmailNotificationSettings(user)
+  };
 }
 
 // POST /api/auth/register
@@ -56,6 +63,10 @@ router.post('/register', authLimiter, async (req, res, next) => {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       passwordHash,
+      emailNotifications: {
+        enabled: false,
+        email: email.trim().toLowerCase()
+      },
       createdAt: now
     };
 
@@ -108,6 +119,52 @@ router.get('/me', requireAuth, async (req, res, next) => {
     const snap = await db.ref(`users/${req.userId}`).get();
     if (!snap.exists()) return res.status(404).json({ error: 'User not found.' });
     res.json({ user: publicUser(req.userId, snap.val()) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/auth/notifications
+router.get('/notifications', requireAuth, async (req, res, next) => {
+  try {
+    const snap = await db.ref(`users/${req.userId}`).get();
+    if (!snap.exists()) return res.status(404).json({ error: 'User not found.' });
+    res.json({ settings: getEmailNotificationSettings(snap.val()) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /api/auth/notifications - update this user's notification preferences
+router.patch('/notifications', requireAuth, async (req, res, next) => {
+  try {
+    const { enabled, email } = req.body || {};
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({ error: '"enabled" must be true or false.' });
+    }
+    if (email !== undefined && email !== null && typeof email !== 'string') {
+      return res.status(400).json({ error: 'Please provide a valid notification email address.' });
+    }
+
+    const userRef = db.ref(`users/${req.userId}`);
+    const snap = await userRef.get();
+    if (!snap.exists()) return res.status(404).json({ error: 'User not found.' });
+
+    const current = getEmailNotificationSettings(snap.val());
+    const notificationEmail = email === undefined || email === null
+      ? current.email
+      : email.trim().toLowerCase();
+
+    if (notificationEmail && !isEmail(notificationEmail)) {
+      return res.status(400).json({ error: 'Please provide a valid notification email address.' });
+    }
+    if (enabled && !isEmail(notificationEmail)) {
+      return res.status(400).json({ error: 'A valid notification email is required to enable notifications.' });
+    }
+
+    const settings = { enabled, email: notificationEmail };
+    await userRef.update({ emailNotifications: settings });
+    res.json({ settings });
   } catch (err) {
     next(err);
   }

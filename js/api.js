@@ -87,6 +87,8 @@ const Api = {
     apiRequest('/api/auth/login', { method: 'POST', body: { email, password }, auth: false }),
   me: () => apiRequest('/api/auth/me'),
   updateAccount: (payload) => apiRequest('/api/auth/account', { method: 'PATCH', body: payload }),
+  getNotifications: () => apiRequest('/api/auth/notifications'),
+  updateNotifications: (payload) => apiRequest('/api/auth/notifications', { method: 'PATCH', body: payload }),
 
   getDashboard: () => apiRequest('/api/dashboard'),
 

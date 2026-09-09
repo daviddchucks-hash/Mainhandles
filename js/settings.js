@@ -43,6 +43,68 @@
     }
   });
 
+  const notificationForm = document.getElementById('notificationForm');
+  const notificationError = document.getElementById('notificationError');
+  const notificationSuccess = document.getElementById('notificationSuccess');
+  const saveNotificationBtn = document.getElementById('saveNotificationBtn');
+  const notificationsEnabled = document.getElementById('notificationsEnabled');
+  const notificationEmail = document.getElementById('notificationEmail');
+  const notificationStatus = document.getElementById('notificationStatus');
+  const notificationSummaryStatus = document.getElementById('notificationSummaryStatus');
+  const notificationSummaryEmail = document.getElementById('notificationSummaryEmail');
+
+  function showNotificationSettings(settings) {
+    const enabled = settings && settings.enabled === true;
+    const email = settings && settings.email ? settings.email : '';
+    notificationsEnabled.checked = enabled;
+    notificationEmail.value = email;
+    notificationStatus.textContent = enabled ? 'Enabled' : 'Disabled';
+    notificationStatus.className = `badge ${enabled ? 'badge-success' : 'badge-muted'}`;
+    notificationSummaryStatus.textContent = `Email notifications: ${enabled ? 'Enabled' : 'Disabled'}`;
+    notificationSummaryEmail.textContent = `Notification email: ${email || '—'}`;
+  }
+
+  (async function loadNotificationSettings() {
+    try {
+      const { settings } = await Api.getNotifications();
+      showNotificationSettings(settings);
+    } catch (err) {
+      notificationError.textContent = err.message;
+      notificationError.classList.add('is-visible');
+      notificationStatus.textContent = 'Unavailable';
+      notificationStatus.className = 'badge badge-danger';
+    }
+  })();
+
+  notificationForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    notificationError.classList.remove('is-visible');
+    notificationSuccess.classList.remove('is-visible');
+
+    const enabled = notificationsEnabled.checked;
+    const email = notificationEmail.value.trim();
+    if (enabled && !email) {
+      notificationError.textContent = 'Enter a notification email before enabling alerts.';
+      notificationError.classList.add('is-visible');
+      return;
+    }
+
+    saveNotificationBtn.disabled = true;
+    saveNotificationBtn.textContent = 'Saving...';
+    try {
+      const { settings } = await Api.updateNotifications({ enabled, email });
+      showNotificationSettings(settings);
+      notificationSuccess.textContent = 'Email notification settings saved.';
+      notificationSuccess.classList.add('is-visible');
+    } catch (err) {
+      notificationError.textContent = err.message;
+      notificationError.classList.add('is-visible');
+    } finally {
+      saveNotificationBtn.disabled = false;
+      saveNotificationBtn.textContent = 'Save notification settings';
+    }
+  });
+
   const passwordForm = document.getElementById('passwordForm');
   const passwordError = document.getElementById('passwordError');
   const passwordSuccess = document.getElementById('passwordSuccess');

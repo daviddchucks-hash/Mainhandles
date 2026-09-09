@@ -54,6 +54,40 @@
       </form>
     </div>
 
+    <div class="card card-pad" style="margin-bottom:20px;">
+      <div class="settings-card-heading">
+        <div>
+          <h2 style="font-size:16px;">Email notifications</h2>
+          <p class="settings-card-description">Get an email whenever a visitor submits any form on your websites.</p>
+        </div>
+        <span class="badge badge-muted" id="notificationStatus">Loading...</span>
+      </div>
+      <div class="form-error" id="notificationError"></div>
+      <div id="notificationSuccess" class="form-error" style="background:var(--color-success-bg); color:var(--color-success); border-color:#b7e4c7;"></div>
+      <form id="notificationForm">
+        <div class="notification-toggle-row">
+          <div>
+            <strong>Receive new submission emails</strong>
+            <div class="hint">Applies to every website and form in this account.</div>
+          </div>
+          <label class="switch" aria-label="Enable email notifications">
+            <input type="checkbox" id="notificationsEnabled">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="field">
+          <label for="notificationEmail">Notification email</label>
+          <input type="email" id="notificationEmail" maxlength="254" placeholder="owner@example.com">
+          <div class="hint">This is where Handles will send new submission alerts.</div>
+        </div>
+        <div class="notification-summary" id="notificationSummary">
+          <strong id="notificationSummaryStatus">Email notifications: Disabled</strong>
+          <span id="notificationSummaryEmail">Notification email: —</span>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveNotificationBtn">Save notification settings</button>
+      </form>
+    </div>
+
     <div class="card card-pad">
       <h2 style="font-size:16px;">Change password</h2>
       <div class="form-error" id="passwordError"></div>
