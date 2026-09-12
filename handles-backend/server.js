@@ -33,10 +33,18 @@ if (missing.length) {
 const app = express();
 app.set('trust proxy', 1); // needed on Render so req.ip / rate-limit see the real client IP
 
-const allowedOrigins = (process.env.FRONTEND_ORIGIN || '')
+// Keep the two known production frontend origins available even if Render
+// still has the older FRONTEND_ORIGIN value. Extra staging origins can still
+// be supplied through FRONTEND_ORIGIN as a comma-separated list.
+const defaultFrontendOrigins = [
+  'https://mainhandles.pages.dev',
+  'https://daviddchucks-hash.github.io'
+];
+const configuredOrigins = (process.env.FRONTEND_ORIGIN || '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
+const allowedOrigins = [...new Set([...defaultFrontendOrigins, ...configuredOrigins])];
 
 // Authenticated dashboard API: locked down to the known frontend origin(s).
 const dashboardCors = cors({
