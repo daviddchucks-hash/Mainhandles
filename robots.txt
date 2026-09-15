@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /Mainhandles/dashboard.html
+Disallow: /Mainhandles/websites.html
+Disallow: /Mainhandles/forms.html
+Disallow: /Mainhandles/submissions.html
+Disallow: /Mainhandles/settings.html
+Disallow: /Mainhandles/developer.html
+Disallow: /Mainhandles/login.html
+Disallow: /Mainhandles/register.html
+Disallow: /Mainhandles/handles-backend/
+Disallow: /Mainhandles/404.html
+
+Sitemap: https://mainhandles.pages.dev/sitemap.xml

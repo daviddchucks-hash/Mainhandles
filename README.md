@@ -3,13 +3,13 @@
 Static HTML/CSS/vanilla-JS frontend for Handles. Deployed as a GitHub Pages
 **project site** at:
 
-https://daviddchucks-hash.github.io/Mainhandles/
+https://mainhandles.pages.dev/
 
 ## Deploying
 
 This folder's contents go at the **root of the `Mainhandles` repository** —
 `index.html` must sit at the repo root (or in `/docs`, see below), because
-GitHub Pages project sites serve from one of those two locations.
+Cloudflare Pages sites serve from one of those two locations.
 
 1. Create a GitHub repo named `Mainhandles` under the `daviddchucks-hash` account
    (the name must match exactly — it's what forms the `/Mainhandles/` URL path).
@@ -24,7 +24,7 @@ GitHub Pages project sites serve from one of those two locations.
    ```
 3. In the repo: **Settings → Pages → Build and deployment → Source** = "Deploy
    from a branch", **Branch** = `main`, folder = `/ (root)`. Save.
-4. GitHub Pages will publish at `https://daviddchucks-hash.github.io/Mainhandles/`
+4. GitHub Pages will publish at `https://mainhandles.pages.dev/`
    within a minute or two — `index.html` at the root is what makes that URL
    resolve automatically.
 
