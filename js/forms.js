@@ -245,10 +245,13 @@ ${fields}
       websites = sites;
       formsById = Object.fromEntries(forms.map((form) => [form.id, form]));
 
-      if (websiteFilter.options.length <= 1) {
-        websiteFilter.innerHTML = '<option value="">All websites</option>' +
-          websites.map((w) => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
-        if (initialWebsiteId) websiteFilter.value = initialWebsiteId;
+      const currentSelectedWebsite = websiteFilter.value || initialWebsiteId;
+      websiteFilter.innerHTML = '<option value="">All websites</option>' +
+        websites.map((w) => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
+      if (currentSelectedWebsite && websites.some((w) => w.id === currentSelectedWebsite)) {
+        websiteFilter.value = currentSelectedWebsite;
+      } else {
+        websiteFilter.value = '';
       }
 
       const websiteNames = Object.fromEntries(websites.map((w) => [w.id, w.name]));
