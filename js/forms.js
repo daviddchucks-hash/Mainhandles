@@ -130,9 +130,7 @@
         await Api.createForm({ websiteId, name, fields });
         showToast('Form created', 'success');
       }
-      if (websiteFilter.value && websiteFilter.value !== websiteId) {
-        websiteFilter.value = websiteId;
-      }
+      websiteFilter.value = '';
       closeModal();
       loadForms();
     } catch (err) {
@@ -278,13 +276,27 @@ ${fields}
       }
 
       if (filtered.length === 0) {
-        wrap.innerHTML = `
-          <div class="empty-state">
-            <div class="icon">▤</div>
-            <h3>No forms yet</h3>
-            <p>Create a form to get its integration snippet.</p>
-            <button class="btn btn-primary" onclick="document.getElementById('openCreateBtn').click()">+ Add form</button>
-          </div>`;
+        if (activeFilter) {
+          const selectedSiteName = websiteNames[activeFilter] || 'this website';
+          wrap.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">▤</div>
+              <h3>No forms for ${escapeHtml(selectedSiteName)}</h3>
+              <p>There are no forms for this website. You can create one or view all forms across all websites.</p>
+              <div style="margin-top:12px; display:flex; gap:8px; justify-content:center;">
+                <button class="btn btn-primary" onclick="document.getElementById('openCreateBtn').click()">+ Add form</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('websiteFilter').value=''; document.getElementById('websiteFilter').dispatchEvent(new Event('change'));">Show all forms</button>
+              </div>
+            </div>`;
+        } else {
+          wrap.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">▤</div>
+              <h3>No forms yet</h3>
+              <p>Create a form to get its integration snippet.</p>
+              <button class="btn btn-primary" onclick="document.getElementById('openCreateBtn').click()">+ Add form</button>
+            </div>`;
+        }
         return;
       }
 
