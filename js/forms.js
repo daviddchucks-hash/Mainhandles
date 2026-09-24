@@ -25,6 +25,7 @@
   let websites = [];
   let fieldRowCount = 0;
   let formsById = {};
+  let filterInitialized = false;
   const FIELD_TYPES = ['text', 'email', 'tel', 'number', 'date', 'time', 'textarea', 'select', 'checkbox'];
 
   function fieldRowHtml(field) {
@@ -79,7 +80,10 @@
     } else {
       modalTitle.textContent = 'Add form';
       formWebsiteSelect.disabled = false;
-      if (initialWebsiteId) formWebsiteSelect.value = initialWebsiteId;
+      const targetWebsiteId = websiteFilter.value || initialWebsiteId;
+      if (targetWebsiteId && websites.some((w) => w.id === targetWebsiteId)) {
+        formWebsiteSelect.value = targetWebsiteId;
+      }
       addFieldRow({ name: 'name', label: 'Name', type: 'text', required: true });
       addFieldRow({ name: 'email', label: 'Email', type: 'email', required: true });
       addFieldRow({ name: 'message', label: 'Message', type: 'textarea', required: false });
@@ -125,6 +129,9 @@
       } else {
         await Api.createForm({ websiteId, name, fields });
         showToast('Form created', 'success');
+      }
+      if (websiteFilter.value && websiteFilter.value !== websiteId) {
+        websiteFilter.value = websiteId;
       }
       closeModal();
       loadForms();
@@ -245,7 +252,8 @@ ${fields}
       websites = sites;
       formsById = Object.fromEntries(forms.map((form) => [form.id, form]));
 
-      const currentSelectedWebsite = websiteFilter.value || initialWebsiteId;
+      const currentSelectedWebsite = filterInitialized ? websiteFilter.value : (initialWebsiteId || websiteFilter.value);
+      filterInitialized = true;
       websiteFilter.innerHTML = '<option value="">All websites</option>' +
         websites.map((w) => `<option value="${w.id}">${escapeHtml(w.name)}</option>`).join('');
       if (currentSelectedWebsite && websites.some((w) => w.id === currentSelectedWebsite)) {
